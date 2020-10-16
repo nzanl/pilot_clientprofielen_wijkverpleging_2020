@@ -1,0 +1,194 @@
+---
+title: "Process fitted models"
+output: pdf_document
+---
+# Prepare
+
+## Load packages
+
+```{r}
+rm(list=ls())
+library(data.table)
+library(ggplot2)
+library(rpart.plot)
+
+options(scipen=999)
+```
+
+```{r}
+# Read out DSID
+ds_id <- as.integer(readLines("../ds_id.txt"))
+
+suffix_name <- paste0("DSID_", sprintf("%0.2d", ds_id), "_")
+
+dir_pilot <- readLines("../dir_pilot.txt")
+
+```
+
+# Read model list
+
+```{r}
+model_list <- data.table(read.csv2("../config/model_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+model_list_sub <- model_list[active == 1]
+
+# drop trailing empty cols X X.1 etc
+cols_ids_to_drop <- grep("^X", colnames(model_list_sub))
+
+model_list_sub <- model_list_sub[, !(cols_ids_to_drop), with = FALSE]
+```
+
+# Read feature set list
+
+```{r}
+feature_set_list <- data.table(read.csv2("../config/feature_sets_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+feature_set_list_sub <- feature_set_list[active == 1]
+
+
+```
+
+# Read var sets
+
+```{r}
+varsets <- data.table(read.csv2("../config/var_sets.csv", 
+                                   stringsAsFactors = FALSE))
+
+varsets_sub <- varsets[is_active == 1]
+
+```
+
+# Source functions
+
+```{r}
+folder <- "functions"
+
+files <- list.files(folder, pattern = "[.][rR]$", 
+                        full.names = TRUE, recursive = TRUE)
+if (!length(files))
+    stop(simpleError(sprintf('No R files in folder "%s"', folder)))
+
+src <- invisible(lapply(files, source))
+
+message(sprintf('%s files sourced from folder "%s"', length(src), folder))
+
+```
+
+
+# Construct list of models to process
+
+Construct list of models that were fitted in the `build_models.Rmd` Notebook.
+
+Point `fit_folder` to location containing the fitted models.
+
+```{r}
+fit_folder <- c("..\\Work\\Output/")
+
+model_res <- as.data.table(construct_model_filelist(model_list_sub, 
+                                                    feature_set_list_sub, 
+                                                    varsets_sub, 
+                                                    aanb_list,
+                                                    folder = fit_folder))
+
+```
+
+# Enrich with model_list en varsets records
+
+```{r}
+setkey(model_res, model_id)
+setkey(model_list_sub, model_id)
+model_res <- model_res[model_list_sub]
+
+```
+
+
+```{r}
+model_res$var_set_id <- as.integer(as.character(model_res$var_set_id))
+
+setkey(model_res, var_set_id)
+setkey(varsets, var_set_id)
+model_res <- varsets[model_res]
+
+```
+
+# Calculate metrics per model. Only for best model.
+
+```{r}
+model_res <- as.data.table(process_results(model_res))
+
+```
+
+
+## Creeër label per fit
+
+```{r}
+model_res$label2 <- paste0(model_res$fit_method, "_", 
+                           model_res$metric, "_" , model_res$selectionFunction)
+
+```
+
+
+```{r}
+table(is.na(model_res$meanMAPE))
+```
+
+```{r}
+model_res <- model_res[, fit_id := paste0(fs_id, "_", ds_id, "_", model_id, "_", var_set_id, 
+                                          ifelse(is.na(aanb_ex), "", paste0("_ex", aanb_ex)))]
+```
+
+# Plak aanbieder naam er aan
+
+```{r eval = FALSE}
+pilot_aanbieders <- as.data.table(read.csv2("../config/datasources_list.csv", na.strings = c("NULL")))
+
+pilot_aanbieders <- subset(pilot_aanbieders, select = c(aanbiederID, provider))
+
+setnames(pilot_aanbieders, "aanbiederID", "aanb_ex")
+setnames(pilot_aanbieders, "provider", "AanbiederNaam")
+
+setkey(model_res, aanb_ex)
+setkey(pilot_aanbieders, aanb_ex)
+
+model_res <- pilot_aanbieders[, .(aanb_ex, AanbiederNaam)][model_res]
+
+model_res <- model_res[, AanbiederNaam := as.factor(AanbiederNaam)]
+```
+
+# Plak fset specs eraan
+
+```{r}
+setkey(model_res, fs_id)
+setkey(feature_set_list, fs_id)
+model_res <- feature_set_list[model_res]
+
+```
+
+# Save results
+
+```{r}
+saveRDS(model_res, "../Work/Output/model_res.rds")
+
+```
+
+# Plot all CART trees
+
+```{r eval = FALSE}
+for(filename in model_res[fit_method == "cart" & var_set_label != "intercept only",]$filename){
+  
+  caret_fit <- readRDS(filename)
+  
+  png_out_name <-   paste0(filename, "_tree.png")
+  
+  png(file = png_out_name, 
+    width = 2*640, # The width of the plot in inches
+    height = 2*480,
+    pointsize = 18) # The height of the plot in inches
+ 
+  plot_tree_model(caret_fit$finalModel)
+  dev.off() 
+}
+```
+

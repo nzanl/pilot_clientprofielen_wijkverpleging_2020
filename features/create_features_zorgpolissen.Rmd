@@ -1,0 +1,121 @@
+---
+title: "Create features for zorgpolissen"
+author: Nederlandse Zorgautoriteit
+date: August 2019
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+---
+
+# Load packages
+
+```{r}
+rm(list = ls())
+
+library(ggplot2)
+library(tidyverse)
+library(data.table)
+library(caret)
+
+```
+
+# Set source directory
+
+```{r}
+dir_pilot <- readLines("../dir_pilot.txt")
+
+```
+
+# Read datasources list
+
+```{r}
+# Read out DSID
+ds_id <- as.integer(readLines("../ds_id.txt"))
+
+suffix_name <- paste0("DSID_", sprintf("%0.2d", ds_id), "_")
+
+```
+
+# Read data
+
+```{r}
+file_name <- paste0(dir_pilot, "Output/", suffix_name, "zorgpolissen.rds")
+zorgpolissen <- setDT(readRDS(file_name))
+
+```
+
+# Source functions
+
+```{r}
+source("functions/addVarsToVarlist.R")
+
+```
+
+# Create features for zorgpolissen
+
+Is al in het goede format.
+
+```{r}
+features_zorgpolissen <- zorgpolissen
+
+features_zorgpolissen$X <- NULL
+```
+
+
+
+save features_zorgpolissen table
+
+```{r}
+file_name <- paste0(dir_pilot, 'Output/', suffix_name, "features_zorgpolissen.rds")
+saveRDS(features_zorgpolissen, file_name)
+
+```
+
+
+# Add variable names and setname to variable list
+
+
+We need to add all features, except `premie`, this is our dep var.
+
+To showcase how groups of predictors work we do the following.
+
+We split the predictors in two groups: variabelen gerelateerd aan de contracteergraad (zp_cgraad) en overig (zp_overig).
+
+
+```{r}
+zp_cgraad <- c( "CGApo"     ,   "CGFysio"  ,    "CGZbc"     ,   "CGZiekenhuis" )
+
+empty_varlist <- data.table()
+varlist_zp_cgraad <- addVarsToVarlist(empty_varlist, zp_cgraad)
+
+```
+
+
+```{r}
+zp_overig <- names(features_zorgpolissen)
+
+# geen voorspellers
+exclude <- c("uzovi", "concern", "verz", "polisnr", "label", "Naammodelovereenkomst", "premie", "AanbiederID", "jaar")
+
+zp_overig <-  setdiff(zp_overig, c(exclude, zp_cgraad))
+
+varlist_zp <- addVarsToVarlist(varlist_zp_cgraad, zp_overig)
+```
+
+```{r}
+zp_jaar <- "jaar"
+
+varlist_zp <- addVarsToVarlist(varlist_zp, zp_jaar)
+```
+
+
+```{r}
+# save
+file_name <- paste0(dir_pilot, 'Output/', suffix_name, "varlist_all.rds")
+saveRDS(varlist_zp, file_name)
+
+```
+
+
+

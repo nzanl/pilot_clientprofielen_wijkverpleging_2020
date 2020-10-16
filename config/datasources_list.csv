@@ -1,0 +1,9 @@
+id;input_type;provider;aanbiederID;source_dir;suffix_aanb;pre_string;post_string;table_list;preprocess_script;postprocess_Script;active;fileEncoding;lowerboundary;upperboundary;gaplength;aanleverdatum
+1;pilot;achmea;101;200901;achmea_;200901_;_achmea.csv;zorgpolissen;pre.R;post.R;1;latin1;NA;NA;;1-6-2020
+1;pilot;cz;102;200901;cz_;200901_;_cz.csv;zorgpolissen;pre.R;post.R;1;latin1;NA;NA;;1-6-2020
+1;pilot;vgz;103;200901;vgz_;200901_;_vgz.csv;zorgpolissen;pre.R;post.R;1;latin1;NA;NA;;1-6-2020
+1;pilot;menzis;104;200901;menzis_;200901_;_menzis.csv;zorgpolissen;pre.R;post.R;1;latin1;NA;NA;;1-6-2020
+1;pilot;overig;105;200901;overig_;200901_;_overig.csv;zorgpolissen;pre.R;post.R;1;latin1;NA;NA;;1-6-2020
+2;pilot;achmea;101;200901;achmea_;200901_;_achmea.csv;zorgpolissen;pre.R;post.R;0;latin1;NA;NA;;1-6-2020
+3;pilot;cz;102;200901;cz_;200901_;_cz.csv;zorgpolissen;pre.R;post.R;0;latin1;NA;NA;;1-6-2020
+4;pilot;vgz;103;200901;vgz_;200901_;_vgz.csv;zorgpolissen;pre.R;post.R;0;latin1;NA;NA;;1-6-2020

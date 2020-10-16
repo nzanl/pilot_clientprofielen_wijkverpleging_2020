@@ -1,0 +1,14 @@
+*.rds
+*.pdf
+*.docx
+*.db
+*.avi
+*.html
+*.pptx
+.Rhistory
+*.tex
+*.log
+**/*_cache/*
+/work/*
+/ds_id.txt
+/dir_pilot.txt

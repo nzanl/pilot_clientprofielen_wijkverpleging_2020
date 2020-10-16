@@ -1,0 +1,48 @@
+"";"uzovi";"concern";"verz";"polisnr";"jaar";"label";"Naammodelovereenkomst";"premie";"soortpolis";"Onlinedeclareren";"Onlinedeclarerenverplicht";"viaappdeclareren";"X900";"Internetformulier";"Internetapotheek";"MSZ_verg";"GGZ_verg";"FYSIO_verg";"APO_verg";"CGApo";"CGFysio";"CGZbc";"CGZiekenhuis";"AanbiederID"
+"1";420;"VGZ";"N.V. VGZ CARES";10;"J2016";"De Goudse";"De Goudse Zorg Polis Ruime Keuze (Natura)";1314;"Natura";"nee";"nee";"nee";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,71;0,46;1;103
+"2";420;"VGZ";"N.V. VGZ CARES";100;"J2016";"Besured";"Cares Natura Selectief (Besured Ruime Keuze)";1215,48;"Natura";"ja";"nee";"nee";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,71;0,46;1;103
+"8";101;"VGZ";"N.V. UNIVÉ ZORG";107;"J2016";"Univé";"Univé Zorg Select Polis";1079,4;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,7;0,7;0,7;0,7;0,72;0,71;0,46;1;103
+"11";420;"VGZ";"N.V. VGZ CARES";11;"J2016";"De Goudse";"De Goudse Zorg Polis Eigen Keuze (Restitutie)";1367,4;"Restitutie";"nee";"nee";"nee";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"18";9015;"VGZ";"VGZ voor de Zorg N.V.";29;"J2016";"IZZ";"IZZ Basisverzekering variant natura";1239,36;"Natura";"ja";"nee";"nee";"ja";"ja";"nee";1;1;0,8;0,8;0,9;0,71;1;1;103
+"19";9015;"VGZ";"VGZ voor de Zorg N.V.";30;"J2016";"IZZ";"IZZ Basisverzekering variant restitutie";1292,64;"Restitutie";"ja";"nee";"nee";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"28";736;"VGZ";"N.V. ZORGVERZEKERAAR UMC";47;"J2016";"UMC";"UMC Zorgverzekering";1186,8;"Restitutie";"ja";"nee";"nee";"ja";"nee";"nee";1;1;1;1;1;1;1;1;103
+"30";101;"VGZ";"N.V. UNIVÉ ZORG";50;"J2016";"Univé";"Univé Zorg Geregeld polis";1284;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,71;0,46;1;103
+"31";101;"VGZ";"N.V. UNIVÉ ZORG";51;"J2016";"Univé, ZEKUR (Gewoon ZEKUR Zorg Vrij)";"Univé Zorg Vrij polis";1344;"Restitutie";"ja";"nee";"nee";"nee";"ja";"nee";1;1;1;1;1;1;1;1;103
+"32";101;"VGZ";"N.V. UNIVÉ ZORG";52;"J2016";"Zorgzaam";"Univé Zorgzaam polis";1316,64;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,9;0,9;0,9;0,9;0,9;0,71;0,46;1;103
+"33";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";53;"J2016";"VGZ";"VGZ Ruime Keuze";1295,4;"Natura";"ja";"nee";"ja";"ja";"nee";"nee";0,8;0,8;0,8;0,8;0,9;0,71;0,46;1;103
+"34";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";54;"J2016";"VGZ";"VGZ Eigen Keuze";1367,4;"Restitutie";"ja";"nee";"ja";"ja";"nee";"nee";1;1;1;1;1;1;1;1;103
+"38";101;"VGZ";"N.V. UNIVÉ ZORG";65;"J2016";"ZEKUR";"Univé Gewoon ZEKUR Zorg";1032;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,8;0,8;0,8;0,8;0,72;0,71;0,46;0,23;103
+"42";699;"VGZ";"IZA ZORGVERZEKERAAR N.V.";74;"J2016";"IZA";"IZA GezondSamenPolis Restitutie";1312,8;"Restitutie";"ja";"nee";"nee";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"48";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";82;"J2016";"Bewuzt";"VGZ Bewuzt Basis";1104;"Natura";"ja";"nee";"nee";"ja";"ja";"nee";0,7;0,7;0,7;0,7;0,72;0,71;0,46;1;103
+"60";699;"VGZ";"IZA ZORGVERZEKERAAR N.V.";98;"J2016";"IZA";"IZA GezondSamenPolis Natura";1270,68;"Natura";"ja";"nee";"nee";"ja";"ja";"nee";0,75;0,75;0,75;0,75;0,9;0,71;0,46;1;103
+"61";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";99;"J2016";"VGZ";"VGZ Goede Keuze";1199,4;"Natura";"ja";"nee";"ja";"ja";"nee";"nee";0,75;0,75;0,75;0,75;0,9;0,71;0,46;1;103
+"62";420;"VGZ";"N.V. VGZ CARES";10;"J2017";"De Goudse";"De Goudse Zorg Polis Ruime Keuze (Natura)";1355,4;"Natura";"nee";"nee";"nee";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,75;0,39;0,99;103
+"63";420;"VGZ";"N.V. VGZ CARES";100;"J2017";"Besured";"Cares Natura Selectief (Besured Ruime Keuze)";1275,48;"Natura";"ja";"nee";"nee";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,75;0,39;0,99;103
+"69";101;"VGZ";"N.V. UNIVÉ ZORG";107;"J2017";"Univé";"Univé Zorg Select Polis";1185;"Natura";"ja";"nee";"ja";"nee";"ja";"nee";0,7;0,7;0,7;0,7;0,77;0,75;0,39;0,99;103
+"72";420;"VGZ";"N.V. VGZ CARES";11;"J2017";"De Goudse";"De Goudse Zorg Polis Eigen Keuze (Restitutie)";1427,4;"Restitutie";"nee";"nee";"nee";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"80";9015;"VGZ";"VGZ voor de Zorg N.V.";29;"J2017";"IZZ";"IZZ Basisverzekering variant natura";1319,28;"Natura";"ja";"nee";"ja";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,75;0,39;0,99;103
+"81";9015;"VGZ";"VGZ voor de Zorg N.V.";30;"J2017";"IZZ";"IZZ Basisverzekering variant restitutie";1359,36;"Restitutie";"ja";"nee";"ja";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"90";736;"VGZ";"N.V. ZORGVERZEKERAAR UMC";47;"J2017";"UMC";"UMC Zorgverzekering";1258,8;"Restitutie";"ja";"nee";"nee";"ja";"nee";"nee";1;1;1;1;1;1;1;1;103
+"92";101;"VGZ";"N.V. UNIVÉ ZORG";50;"J2017";"Univé";"Univé Zorg Geregeld polis";1359;"Natura";"ja";"nee";"ja";"nee";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,75;0,39;0,99;103
+"93";101;"VGZ";"N.V. UNIVÉ ZORG";51;"J2017";"Univé";"Univé Zorg Vrij polis";1407;"Restitutie";"ja";"nee";"ja";"nee";"ja";"nee";1;1;1;1;1;1;1;1;103
+"94";101;"VGZ";"N.V. UNIVÉ ZORG";52;"J2017";"Zorgzaam";"Univé Zorgzaam polis";1359,96;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,9;0,9;0,9;0,9;0,9;0,75;0,39;0,99;103
+"95";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";53;"J2017";"VGZ";"VGZ Ruime Keuze";1355,4;"Natura";"ja";"nee";"ja";"ja";"nee";"nee";0,8;0,8;0,8;0,8;0,9;0,75;0,39;0,99;103
+"96";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";54;"J2017";"VGZ";"VGZ Eigen Keuze";1427,4;"Restitutie";"ja";"nee";"ja";"ja";"nee";"nee";1;1;1;1;1;1;1;1;103
+"100";101;"VGZ";"N.V. UNIVÉ ZORG";65;"J2017";"ZEKUR";"Univé Gewoon ZEKUR Zorg";1104;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,8;0,8;0,8;0,8;0,77;0,75;0,39;0,37;103
+"104";699;"VGZ";"IZA ZORGVERZEKERAAR N.V.";74;"J2017";"IZA";"IZA Eigen Keuze";1371;"Restitutie";"ja";"nee";"ja";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"108";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";82;"J2017";"Bewuzt";"VGZ Bewuzt Basis";1189,8;"Natura";"ja";"nee";"ja";"nee";"ja";"nee";0,7;0,7;0,7;0,7;0,77;0,75;0,39;0,99;103
+"118";699;"VGZ";"IZA ZORGVERZEKERAAR N.V.";98;"J2017";"IZA";"IZA Ruime Keuze";1320;"Natura";"ja";"nee";"ja";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,9;0,75;0,39;0,99;103
+"119";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";99;"J2017";"VGZ";"VGZ Goede Keuze";1259,4;"Natura";"ja";"nee";"ja";"ja";"nee";"nee";0,75;0,75;0,75;0,75;0,9;0,75;0,39;0,99;103
+"125";101;"VGZ";"N.V. UNIVÉ ZORG";107;"J2018";"Univé";"Univé Zorg Select Polis";1211,4;"Natura";"ja";"nee";"ja";"nee";"ja";"nee";0,7;0,7;0,7;0,7;0,91;0,73;0,49;1;103
+"137";9015;"VGZ";"VGZ voor de Zorg N.V.";29;"J2018";"IZZ";"IZZ Basisverzekering variant natura";1373,28;"Natura";"ja";"nee";"ja";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,91;0,73;0,49;1;103
+"138";9015;"VGZ";"VGZ voor de Zorg N.V.";30;"J2018";"IZZ";"IZZ Basisverzekering variant restitutie";1433,28;"Restitutie";"ja";"nee";"ja";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"147";736;"VGZ";"N.V. ZORGVERZEKERAAR UMC";47;"J2018";"UMC";"UMC Zorgverzekering";1318,08;"Restitutie";"ja";"nee";"ja";"ja";"nee";"nee";1;1;1;1;1;1;1;1;103
+"149";101;"VGZ";"N.V. UNIVÉ ZORG";50;"J2018";"Univé";"Univé Zorg Geregeld polis";1398;"Natura";"ja";"nee";"ja";"nee";"ja";"nee";0,8;0,8;0,8;0,8;0,91;0,73;0,49;1;103
+"150";101;"VGZ";"N.V. UNIVÉ ZORG";51;"J2018";"Univé, ZEKUR";"Univé Zorg Vrij polis";1455;"Restitutie";"ja";"nee";"nee";"nee";"ja";"nee";1;1;1;1;1;1;1;1;103
+"151";101;"VGZ";"N.V. UNIVÉ ZORG";52;"J2018";"Zorgzaam";"Univé Zorgzaam polis";1398,96;"Natura";"ja";"nee";"nee";"nee";"ja";"nee";0,9;0,9;0,9;0,9;0,91;0,73;0,49;1;103
+"152";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";53;"J2018";"VGZ";"VGZ Ruime Keuze";1394,4;"Natura";"ja";"nee";"ja";"ja";"nee";"nee";0,8;0,8;0,8;0,8;0,91;0,73;0,49;1;103
+"153";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";54;"J2018";"VGZ";"VGZ Eigen Keuze";1466,4;"Restitutie";"ja";"nee";"ja";"ja";"nee";"nee";1;1;1;1;1;1;1;1;103
+"157";101;"VGZ";"N.V. UNIVÉ ZORG";65;"J2018";"ZEKUR";"Univé Gewoon ZEKUR Zorg";1126,2;"Natura";"ja";"nee";"nee";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,91;0,73;0,49;0,38;103
+"161";699;"VGZ";"IZA ZORGVERZEKERAAR N.V.";74;"J2018";"IZA";"IZA Eigen Keuze";1422;"Restitutie";"ja";"nee";"ja";"ja";"ja";"nee";1;1;1;1;1;1;1;1;103
+"164";7095;"VGZ";"VGZ ZORGVERZEKERAAR N.V.";82;"J2018";"Bewuzt";"VGZ Bewuzt Basis";1216,2;"Natura";"ja";"nee";"ja";"nee";"ja";"nee";0,7;0,7;0,7;0,7;0,91;0,73;0,49;1;103
+"174";699;"VGZ";"IZA ZORGVERZEKERAAR N.V.";98;"J2018";"IZA";"IZA Ruime Keuze";1371;"Natura";"ja";"nee";"ja";"ja";"ja";"nee";0,8;0,8;0,8;0,8;0,91;0,73;0,49;1;103

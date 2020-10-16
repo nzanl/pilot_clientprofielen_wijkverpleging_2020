@@ -1,0 +1,139 @@
+---
+title: "Read csvs and merge datasets"
+author: Nederlandse Zorgautoriteit
+date: August 2019
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+---
+
+# Load packages
+
+```{r}
+rm(list = ls())
+library(ggplot2)
+library(tidyverse)
+library(data.table)
+```
+
+
+# Read data
+
+```{r}
+dir_pilot <- readLines("../dir_pilot.txt")
+
+```
+
+```{r}
+ds_list <- read.csv2("../config/datasources_list.csv", na.strings = c("NULL"))
+
+# select active ds_id
+
+ds_list_sel <- ds_list %>% 
+  filter(active == 1) %>%
+  filter(input_type == "pilot")
+
+if(length(unique(ds_list_sel$id)) > 1) {
+  stop("currently only one ds_id can be active")
+} else {
+    ds_id <- unique(ds_list_sel$id)
+}
+
+```
+
+
+## Read and preprocess provider data
+
+Loops over all input files defined in `ds_list_sel` 
+
+```{r}
+for(i in 1:nrow(ds_list_sel)){
+  
+  data_source <- ds_list_sel[i,]
+  
+  src_dir <- paste0(dir_pilot, data_source$provider, 
+                    "/", data_source$source_dir, "/")
+  
+  aanb <- data_source$suffix_aanb
+  
+  if(data_source$pre_string == 'NA') {
+     pre_string <- ''
+  } else pre_string <- data_source$pre_string
+  
+  if(data_source$post_string == 'NA') {
+     post_string <- '.csv'
+  } else post_string <- data_source$post_string
+  
+  table_list <- unlist(str_split(data_source$table_list, ", "))
+  
+  if(data_source$fileEncoding == 'NA') data_source$fileEncoding <- ''
+  
+  list_of_tables <- list()
+  cnt <- 0
+  
+  for (table_name in table_list){
+    cnt <- cnt + 1
+    filename <- paste0(src_dir, pre_string, table_name, post_string)
+    print(filename)
+    list_of_tables[[cnt]] <- data.table(read.csv2(filename, 
+                                                  na.strings = c("NULL"), 
+                                                  fileEncoding = data_source$fileEncoding))
+    
+    names(list_of_tables)[cnt] <- paste0(aanb, table_name)
+  }
+  
+  list2env(list_of_tables, envir=.GlobalEnv)
+  rm(list_of_tables)
+  
+  # run pre-process scripts
+  script_name <- data_source$preprocess_script
+  
+  file_name <- paste0("./pre_post_scripts/", script_name)
+  
+  msg <- paste0("Running script ", script_name)
+  print(msg)
+  
+  source(file_name)
+}
+
+```
+
+# Row-Bind data
+
+```{r}
+list_of_tables <- list()
+cnt <- 0
+
+suffix_name <- paste0("DSID_", sprintf("%02d", ds_id), "_")
+
+for(table_name in table_list) {
+  match <- ls(pattern = paste0(table_name), .GlobalEnv)
+  if(!identical(match, character(0))){
+    list_aanb <- list(mget(match))
+    cnt <- cnt + 1
+    result <- do.call(rbind, list_aanb)
+    list_of_tables[[cnt]] <- do.call(rbind, result)
+    names(list_of_tables)[cnt] <- paste0(suffix_name, table_name)
+  }
+}
+
+```
+
+# Save data
+
+```{r eval = TRUE}
+dir_pilot <- readLines("../dir_pilot.txt")
+
+dir.create(paste0(dir_pilot, 'Output'))
+
+table_list_suffix <- names(list_of_tables)
+
+for (table_name in table_list_suffix) {
+  path <- paste0(dir_pilot, '/Output/', table_name, '.rds')
+  
+  saveRDS(list_of_tables[[table_name]], file = path)
+}
+
+```
+

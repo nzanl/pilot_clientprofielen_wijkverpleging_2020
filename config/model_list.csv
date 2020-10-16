@@ -1,0 +1,4 @@
+model_id;pre_process;fit_method;n_clusts;random_seed;cv_method;nr_folds;nr_repeats;mtry;n_mtry;splitrule;min_node;active;varsets;label;label_order;permutate_y;n_perm_runs;selectionFunction;metric;minbucket;int_validate
+1;basic_prep;random_forest;NA;1;repeatedcv;10;1;range;4;variance;20;1;all;rf all;99;0;30;tolerance;MAE;NA;0
+2;basic_prep;cart;optimal;1;repeatedcv;10;10;NA;;NA;NA;1;all;cart all;99;0;30;tolerance;MAE;30;0
+3;basic_prep;ols;optimal;1;repeatedcv;10;10;NA;;NA;NA;1;all;ols all;99;0;30;tolerance;MAE;NA;0

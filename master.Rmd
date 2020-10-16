@@ -1,0 +1,258 @@
+---
+title: Master script voor framework 
+author: Gertjan Verhoeven en Maud de Korte
+output:
+  pdf_document: default
+---
+
+# Laden benodigde packages
+
+```{r}
+library(rmarkdown)
+library(tidyverse)
+library(data.table)
+library(ggplot2)
+library(ranger)
+library(caret)
+library(stringr)
+library(readr)
+library(rpart)
+library(rpart.plot)
+library(plyr)
+library(yardstick)
+
+```
+
+
+## Beschrijving van het framework
+
+Het framework is geschikt voor een situatie (use case) waar 
+
+* meerdere partijen (b.v. zorgaanbieders) 
+* meerdere data leveringen doen van 
+* meerdere bestanden met telkens dezelfde specificatie, 
+
+waarbij het wenselijk is dat de bestanden samengevoegd worden tot een geheel en geanalyseerd.
+
+Er kunnen ook verschillende groepen aanbieders worden onderscheiden, waarbij analyses apart per aanbieder groep worden uitgevoerd. Op dit moment zijn de aanbieders groepen beperkt (en hardcoded) tot `all`, `nanda` of `omaha`. Deze functionaliteit wordt niet gebruikt in het voorbeeld met de zorgpolissen.
+
+Het framework zorgt ervoor dat de dataprep plaats vind, de modellen worden gebouwd en tenslotte geanalyseerd.
+
+## configuratie via CSV files
+
+Een voorspelmodel wordt gebouwd op een specifieke set gegevensleveringen, waar op een specifieke manier variabelen van worden gemaakt (features) en evt records worden gefilterd, en waar uiteindelijk een specifiek algoritme met specifieke tuning parameter waardes wordt gebruikt.
+
+in `config/` staan vier CSV files waar deze variaties centraal bijgehouden wordt.
+
+Dit betreft:
+
+* verzamelingen van data-leveringen (datasets, ds_id), 
+* combinaties van (groepen) voorspellers (variable sets, var_set_id),
+* combinaties van feature sets (voorspellers) incl filters (fs_id), 
+* modellen (Algoritme, tuning parameters) (model_id).
+
+## Beschrijving Datasource id (DS_ID) systeem
+
+De analyses worden gerund voor een specifieke dataset.
+Dit houden we bij via DS_ID (`ds_id.txt`).
+Deze file bevat de id van de verzameling geprepte dataleveringen die we willen analyseren.  
+
+Om de code te runnen moeten eerst lokaal een `ds_id.txt` en een `dir_pilot.txt` aangemaakt worden.
+
+```{r eval = TRUE}
+cat("1\n", file="ds_id.txt")
+
+cwd <- getwd()
+datasource_location <- paste0(cwd, "/datasources/\n")
+
+cat(datasource_location, file="dir_pilot.txt")
+```
+
+Een DS_ID wijst naar een collectie van RUWE input files. 
+
+De locatie van de databestanden worden gevonden via de `dir_pilot.txt` .
+
+In deze voorbeeld repo met open data wijst deze naar `datasources/`
+
+De bestandslocatie wordt gevonden door te combineren: 
+
+* (dir_pilot), 
+* (aanbieder) 
+* (levering).  
+
+In `config/datasources_list.csv` wordt bijgehouden welke input bestanden bij welke DS_ID horen.  
+Ook is hier de mogelijkheid om aan te geven welke datasets "aangemaakt" moeten worden tijdens de dataprep, dit werkt dmv de "active" kolom. Het kan dus zo zijn dat de analyses kijken naar DS_ID 1, en dat de dataprep gerund wordt voor DS_ID 2.
+
+Door bij het inlezen van de te analyseren bestanden de DS_ID toe te voegen kunnen we de gewenste versies inlezen.
+
+### pre / post processing op data-levering niveau
+
+Omdat data leveringen specifieke pre en/of post processing nodig kunnen hebben voordat ze door de standaard dataprepr "straat" kunnen, is hierin voorzien.  
+
+* Pre processing omdat wellicht er dingen uniek gefixed moeten worden.  
+* Post processing om evt selecties binnen de gehele dataset te maken
+
+De dataprep leidt tot output files in `datasources/Output` die allemaal beginnen met `DSID_#`
+
+```{r}
+rmarkdown::render("dataprep/read_and_bind_csvs.Rmd", quiet = TRUE)
+```
+
+
+# Beschrijving feature_sets (FS_ID) systeem
+
+Het feature_sets systeem leidt tot verschillende feature sets waarin verschillende keuzes worden gemaakt.
+Denk hierbij aan keuzes bij het koppelen van tabellen en filters die wel/niet aan staan. 
+
+Feature sets worden aangeduid met een "FS_ID". 
+
+In `features_set_list.csv` wordt bijgehouden welke FS_IDs er allemaal zijn, welke actief zijn (gemaakt moeten worden), en welke parameters van toepassing zijn.
+
+Elke FS_ID leidt tot drie output files op U:/ die allemaal beginnen met FSID_#. 
+
+De drie output files zijn 
+
+1) features beschikbaar voor alle aanbieders en 
+2) features voor nanda aanbieders en 
+3) features voor omaha aanbieders 
+
+In de voorbeeld dataset werken we met alle  "aanbieders" (verschillende zorgverzekeraars).
+
+## Voorbereiden datasets voor modellen
+
+Alle datasets met variabelen worden omgeschreven naar feature format.
+Dit is dataset specifiek: voor dit voorbeeld moeten we voorspellers voor de `zorgpolissen` dataset selecteren.
+
+```{r}
+rmarkdown::render("features/create_features_zorgpolissen.Rmd", quiet = TRUE)
+```
+
+`varlist` is een lijst met alle afzonderlijke variabelen gekoppeld aan een groepsnaam. Hiermee kunnen we groepen van voorspellers selecteren.
+
+In `create_features_zorgpolissen` wordt `varlist` leeg aangemaakt en gevuld. Daarna wordt deze verder aangevuld.
+
+In het voorbeeld maken we twee groepen voorspellers ("var sets") aan, `zp_declaratie` en `zp_overig`.
+
+We hebben nu voor alle groepen variabelen een feature tabel (de data zelf) plus een lijst met variable namen (varlist / var sets).
+
+## Create data sets for modelling
+
+Vervolgens maken we de complete feature sets aan waar een model op gebouwd kan worden. 
+Dit gebeurt adhv de feature_sets_list. Elke feature set heeft een `fs_id`.
+
+Deze stap bestaat uit het koppelen van de afzonderlijke feature sets, de uitkomst variabele(n) en het toepassen van filters.
+
+Om te laten zien hoe filters werken hebben we een filter aangemaakt die restitutie polissen er uit filtert.
+Dit is een voorbeeld van een filter op een waarde van een voorspeller.
+
+Feature sets kunnen meerdere uitkomst variabelen bevatten.
+In dit voorbeeld is er 1 uitkomst variabele, de premie (prijs van de polis).
+
+
+```{r}
+rmarkdown::render("features/create_datasets_for_modelling.Rmd", quiet = TRUE)
+```
+
+# build_models: Bouw modellen voor specifieke combinaties van groepen voorspellers
+
+Hier draait alles om de `var_set_id` 's en de `model_id` s.
+
+Een `var_set_id` definieert een bepaalde combinatie van groepen (set) van voorspellende variabelen. Voor elke aanbieder groep is een aparte `var_set_id`, dit zorgt er voor dat we via `aanb_type` alle `var_set_id`'s kunnen selecteren die "geldig" zijn voor die groep aanbieders.
+
+`model_id` 's zijn verschillende combinaties van 
+
+* algoritme (CART, Random Forest, OLS), 
+* tuning instellingen (pru), algoritme instellingen, Cross Validatie settings etc.
+
+Ook hier is weer een pre-proces script dat gebruikt kan worden om bv variabele selectie te doen voor het fitten.
+
+Elk model heeft een `varsets` variabele, hiermee selecteren we OF 1 van de drie groepen van `var_set_id` s (all, nanda of omaha), OF we selecteren specifieke var_set_id's gescheiden via komma's .
+Dit is nodig, omdat bepaalde voorspellers alleen bij bepaalde aanbieder groepen aanwezig zijn.
+(Zo zijn nanda voorspellers alleen beschikbaar voor nanda aanbieders). 
+
+Met deze informatie kunnen de modellen gefit worden.
+
+```{r}
+rmarkdown::render("models/build_models.Rmd", quiet = TRUE)
+```
+
+# process_models: extract results and calculate metrics
+
+In deze stap worden de gefitte modellen ingelezen en geanalyseerd.
+Zo wordt de voorspelkracht op verschillende manieren berekend.
+
+Output is een dataset `model_res` met per model performance metrics, en aanvullende gegevens zoals het aantal clusters als het model een beslisboom is.
+
+```{r}
+rmarkdown::render("models/process_models.Rmd", quiet = TRUE)
+```
+
+
+# explore_models: analyseer resultaten
+
+In de laatste stap worden de analyseresultaten uit `model_res` ingelezen en zijn beschikbaar voor verdere analyse. In dit voorbeeld doen we een controle door de resultaten te vergelijken met de voorspelkracht (R2) die we krijgen als we direct een Random forest of OLS op de dataset fitten.
+
+```{r}
+rmarkdown::render("models/explore_models.Rmd", quiet = TRUE)
+
+```
+
+# Visualiseren van de voorspelkracht
+
+```{r}
+model_res <- readRDS("work/Output/model_res.rds")
+
+```
+
+Onderstaande tabel laat de opbouw zien van de model_res tabel.
+
+
+```{r}
+res <- model_res [ , .(n_fits = .N, n_unique_varsets = uniqueN(var_set_id)), 
+                   .(model_id, fit_method, aanb_type)][order(model_id)]
+
+res
+```
+
+Deze code maakt een figuur zoals die ook in het onderzoeksrapport worden getoond.
+
+```{r }
+# fig.height=3, fig.width=8
+res_all <- model_res[dep_var == "premie" & fs_id == 1]
+
+res_all <- res_all[, sort_order := mean(meanRsquared), .(var_set_label_NL)]
+
+res_rf <- res_all[fit_method == "random_forest"]
+
+res_cart <- res_all[fit_method == "cart"]
+
+res_ols <- res_all[fit_method == "ols"]
+
+
+gp <- ggplot(res_all, aes(x = reorder(var_set_label_NL, sort_order), y = meanRsquared, col = factor(fit_method))) +
+  geom_point(size = 4, aes(col = fit_method), data = res_cart) +
+  geom_point(size = 4, aes(col = fit_method), data = res_ols) +
+  geom_point(size = 8, aes(col = fit_method), data = res_rf, shape = 124) +
+  geom_linerange(aes(ymin = Rp_minRsquared, ymax = Rp_maxRsquared), col = "black") + 
+  coord_flip() + ggtitle("Voorspellen van zorgpolis premie") + 
+  expand_limits(y = 5) + facet_wrap(~ aanb_type, ncol = 1) +
+  xlab('') + ylab('R-squared')  + expand_limits(y = 0) +
+  geom_rect(xmin = 3.7, xmax = 4.3, ymin = 0, ymax = 60, fill = "orange", alpha = 0.02) +
+  theme(axis.text.y = element_text(size = 14),
+        axis.title.x = element_text(size = 14),
+        axis.text.x = element_text(size = 13),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        strip.text.x = element_blank())
+
+ggsave("plot_r2.png", gp, width = 8, height = 5)
+
+gp
+```
+
+
+We zien dat we met de complete set voorspellers ca 50% van de variatie in premie kunnen verklaren.
+
+
+
+

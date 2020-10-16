@@ -1,0 +1,149 @@
+---
+title: "Fit prediction models"
+author: Nederlandse Zorgautoriteit
+date: September 2019
+output:
+  pdf_document
+---
+
+# Prepare
+
+## Load packages
+
+```{r}
+rm(list=ls())
+library(data.table)
+library(ggplot2)
+library(ranger)
+library(caret)
+library(stringr)
+library(readr)
+
+options(scipen=999)
+
+```
+
+```{r}
+# Read out DSID
+ds_id <- as.integer(readLines("../ds_id.txt"))
+
+suffix_name <- paste0("DSID_", sprintf("%0.2d", ds_id), "_")
+
+dir_pilot <- readLines("../dir_pilot.txt")
+
+```
+
+## Source functions
+
+```{r}
+folder <- "functions"
+
+files <- list.files(folder, pattern = "[.][rR]$", 
+                        full.names = TRUE, recursive = TRUE)
+if (!length(files))
+    stop(simpleError(sprintf('No R files in folder "%s"', folder)))
+
+src <- invisible(lapply(files, source))
+
+message(sprintf('%s files sourced from folder "%s"', length(src), folder))
+```
+
+## Inlezen var_list
+
+```{r}
+file_name <- paste0(dir_pilot, "Output/", suffix_name, "varlist_all.rds")
+
+varlist <- setDT(readRDS(file_name))
+```
+
+## Inlezen varsets
+```{r}
+varsets <- data.table(read.csv2("../config/var_sets.csv", 
+                                   stringsAsFactors = FALSE))
+
+varsets <- varsets[is_active == 1]
+```
+
+## Read list of model-dataset combi's to fit
+
+We select on `active` and possibly other fields of ``model_list``.
+
+```{r}
+# model list
+model_list <- data.table(read.csv2("../config/model_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+# select subset of models to fit
+model_list_sub <- model_list[active == 1]
+
+#i <- 1
+#model <- model_list_sub[i,]
+```
+
+## Read list of feature set ids
+
+```{r}
+feature_set_list <- data.table(read.csv2("../config/feature_sets_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+feature_set_list_sub <- feature_set_list[active == 1]
+
+```
+
+
+# Build the models
+
+Voor elk model wordt de benodigde dataset ingelezen, het preprocess script gerund en het model gefit met `caret`.
+
+In de preprocess doen we variable selectie, en evt custom stuff.
+
+```{r}
+set.seed(1234) # each model has separate seed as well
+
+dir.create("../work", showWarnings = TRUE)
+dir.create("../work/Output/", showWarnings = TRUE)
+
+for(i in 1:nrow(feature_set_list_sub)) { # loop over feature sets
+  fs_list <- feature_set_list_sub[i,]
+  fs_id <- fs_list$fs_id
+      
+  for (j in 1: nrow(model_list_sub)) { # loop over models
+
+    # select model
+    model <- model_list_sub[j,]
+  
+    print(model$label)
+    
+    if(model$varsets == "all") {
+       if (!("all" %in% varsets$aanb_type)) 
+        stop("all aanb_type in model list but not in varsets")
+      # selecteer alle var_set_ids van aanbieder type all
+      var_set_ids <- varsets[aanb_type == "all",]$var_set_id
+      
+    } else if (model$varsets == "nanda"){
+      if (!("nanda" %in% varsets$aanb_type)) 
+        stop("nanda aanb_type in model list but not in varsets")
+      
+      var_set_ids <- varsets[aanb_type == "nanda",]$var_set_id
+      
+    }  else if (model$varsets == "omaha"){
+             if (!("omaha" %in% varsets$aanb_type)) 
+        stop("omaha aanb_type in model list but not in varsets")
+      var_set_ids <- varsets[aanb_type == "omaha",]$var_set_id
+      
+    }   else {# zijn ids, split deze uit
+        var_set_ids <- unlist(strsplit(as.character(model$varsets), split = ";"))
+       
+    }  
+     
+    n_var_sets <- length(var_set_ids)
+   
+    for(k in 1:n_var_sets){ # loop over var_sets binnen model
+      # do the work
+      fit_model(model, fs_list, varlist, varsets[var_set_id == as.integer(var_set_ids[k]),])
+    }
+   }
+}
+
+
+```

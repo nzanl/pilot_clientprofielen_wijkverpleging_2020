@@ -1,0 +1,115 @@
+---
+title: "Create datasets ready for model building"
+author: Nederlandse Zorgautoriteit
+date: August 2019
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+---
+
+
+# Load packages
+
+```{r}
+rm(list = ls())
+library(ggplot2)
+library(data.table)
+```
+
+# Set source directory
+
+```{r}
+# Read out DSID
+ds_id <- as.integer(readLines("../ds_id.txt"))
+
+suffix_name <- paste0("DSID_", sprintf("%0.2d", ds_id), "_")
+
+dir_pilot <- readLines("../dir_pilot.txt")
+
+```
+
+# Source functions
+
+```{r}
+folder <- "functions"
+
+files <- list.files(folder, pattern = "[.][rR]$", 
+                        full.names = TRUE, recursive = TRUE)
+if (!length(files))
+    stop(simpleError(sprintf('No R files in folder "%s"', folder)))
+
+src <- invisible(lapply(files, source))
+
+message(sprintf('%s files sourced from folder "%s"', length(src), folder))
+
+```
+
+
+# Read data
+
+```{r}
+file_name <- paste0(dir_pilot, "Output/", suffix_name, "zorgpolissen.rds")
+zorgpolissen <- setDT(readRDS(file_name))
+
+file_name <- paste0(dir_pilot, "Output/", suffix_name, "features_zorgpolissen.rds")
+features_zorgpolissen <- setDT(readRDS(file_name))
+
+file_name <- paste0(dir_pilot, "Output/", suffix_name, "varlist_all.rds")
+varlist_all <- setDT(readRDS(file_name))
+
+```
+
+# Read feature_set_list
+
+This contains a list of all datasets for modelling to prepare.
+
+```{r}
+feature_sets_list <- data.table(read.csv2("../config/feature_sets_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+# select subset for feature set construction
+feature_sets_list_sub <- feature_sets_list[active == 1]
+
+```
+
+# Construct feature sets
+
+THis part contains the code for particular filters. 
+As an example we code the `ex_restitutie` filter.
+
+This is also the place where feature sets for the different provider groups is made.
+Since the example only contains a single provider group ("all") that part of the code is commented out.
+
+```{r}
+for(i in 1:nrow(feature_sets_list_sub)) {
+  feature_set <- feature_sets_list_sub[i,]
+  
+  fs_id <- feature_set$fs_id
+  fs_name <- paste0("FSID_", sprintf("%0.2d", fs_id), "_")
+  
+  #
+  features_all <- features_zorgpolissen
+
+  # filters
+  if(feature_set$ex_restitutie == 1) {
+    features_all <- features_all[soortpolis != "Restitutie"]
+  }
+  
+
+  # save results
+  dep_vars <- c('premie')
+  indep_vars <- varlist_all$varname
+  
+  ## features_all
+  indep_all <- colnames(features_all)[colnames(features_all) %in% indep_vars]
+  features_all <- features_all[complete.cases(features_all[, c(dep_vars, indep_all), with = FALSE])]
+  
+  file_name <- paste0(dir_pilot, 'Output/', fs_name, suffix_name, 'features_all.rds')
+  saveRDS(features_all, file_name)
+
+  # dit is de plek om feature sets voor specifieke aanbieder groepen te saven  
+}
+
+```
+

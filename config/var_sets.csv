@@ -1,0 +1,5 @@
+var_set_id ;var_set_label;var_set_label_NL;dep_var;aanb_type;is_active;zp_cgraad;zp_overig;zp_jaar
+1;contracteergraad + jaar;contracteergraad + jaar;premie;all;1;1;0;1
+2;overige voorspellers + jaar;overige voorspellers + jaar;premie;all;1;0;1;1
+3;complete set;complete set;premie;all;1;1;1;1
+4;jaar;jaar;premie;all;1;0;0;1

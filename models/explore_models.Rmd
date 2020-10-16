@@ -1,0 +1,111 @@
+---
+title: "Explore models"
+output: pdf_document
+---
+
+# Prepare
+
+## Load packages
+
+```{r}
+rm(list=ls())
+library(data.table)
+library(ggplot2)
+
+
+options(scipen=999)
+
+```
+
+## Read out DSID and directories
+
+```{r}
+ds_id <- as.integer(readLines("../ds_id.txt"))
+
+suffix_name <- paste0("DSID_", sprintf("%0.2d", ds_id), "_")
+
+dir_pilot <- readLines("../dir_pilot.txt")
+
+```
+
+## Read model list
+
+```{r}
+# model list
+model_list <- data.table(read.csv2("../config/model_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+# select subset of models 
+model_list_sub <- model_list[active == 1]
+
+```
+
+## Read var sets
+
+```{r}
+varsets <- data.table(read.csv2("../config/var_sets.csv", 
+                                   stringsAsFactors = FALSE))
+
+#varsets <- varsets[dep_var == "AvgDuurWtd_inf_4"]
+
+```
+
+## Read feature set list
+
+```{r}
+feature_set_list <- data.table(read.csv2("../config/feature_sets_list.csv", 
+                                   stringsAsFactors = FALSE))
+
+```
+
+## Source functions
+
+```{r}
+folder <- "functions"
+
+files <- list.files(folder, pattern = "[.][rR]$", 
+                        full.names = TRUE, recursive = TRUE)
+if (!length(files))
+    stop(simpleError(sprintf('No R files in folder "%s"', folder)))
+
+src <- invisible(lapply(files, source))
+
+message(sprintf('%s files sourced from folder "%s"', length(src), folder))
+```
+
+
+# Check geautomatiseerde results
+
+```{r}
+df <- read_fset(1)
+```
+
+```{r}
+library(ranger)
+
+file_name <- paste0(dir_pilot, 'Output/', suffix_name, "varlist_all.rds")
+varlist <- readRDS(file_name)
+
+rf.fit <- ranger(premie ~ . , data = df[, colnames(df) %in% c("premie", varlist[setname == "zp_cgraad",]$varname), with = FALSE])
+
+lm.fit <- lm(premie ~ . , data = df[, colnames(df) %in% c("premie", varlist[setname == "zp_cgraad",]$varname), with = FALSE])
+
+rf.fit
+summary(lm.fit)
+
+```
+
+```{r}
+library(ranger)
+
+file_name <- paste0(dir_pilot, 'Output/', suffix_name, "varlist_all.rds")
+varlist <- readRDS(file_name)
+
+rf.fit <- ranger(premie ~ . , data = df[, colnames(df) %in% c("premie", varlist[setname == "zp_overig",]$varname), with = FALSE])
+
+lm.fit <- lm(premie ~ . , data = df[, colnames(df) %in% c("premie", varlist[setname %in%  c("zp_overig", "zp_jaar"),]$varname), with = FALSE])
+
+lm.fit <- lm(premie ~ jaar + Onlinedeclarerenverplicht + soortpolis + CGZiekenhuis, data =df)
+rf.fit
+summary(lm.fit)
+```
